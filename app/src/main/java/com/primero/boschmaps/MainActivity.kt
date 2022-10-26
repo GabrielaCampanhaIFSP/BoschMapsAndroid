@@ -32,19 +32,25 @@ class MainActivity : AppCompatActivity() {
 
     private val client = OkHttpClient()
 
+    object Types{
+        val JSON = "application/json; charset=utf-8".toMediaType()
+    }
+
     fun run() {
-        val edv = findViewById<EditText>(R.id.editTextTextPersonName).text.toString().toInt()
+        val edv = findViewById<EditText>(R.id.editTextTextPersonName).text.toString()
         val password = findViewById<EditText>(R.id.editTextTextPassword).text.toString()
 
-        val formBody = FormBody.Builder()
-            .add("EDV", edv.toString())
-            .add("Password", password.toString())
-            .build()
+//        val formBody = FormBody.Builder()
+//            .add("EDV", edv.toString())
+//            .add("Password", password.toString())
+//            .build()
+
+        val resquestBody = RequestBody.create(Types.JSON,"{\"EDV\":\"${edv}\",\"Password\":\"$password\"}")
 
         val request = Request.Builder()
-            .url("http://10.0.2.2:5000")
+            .url("http://10.0.2.2:5000/login")
             .addHeader("Content-Type","application/json")
-            .post(formBody)
+            .post(resquestBody)
             .build()
 
         client.newCall(request).enqueue(object : Callback {
@@ -54,7 +60,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 println(response.body!!.string())
-                println(formBody)
+                println(resquestBody.toString())
             }
 
         })
